@@ -212,10 +212,12 @@ public class DrawFrame extends JFrame implements Runnable
                     }
                     catch(ClassNotFoundException cnfe)
                     {
+                        cnfe.printStackTrace();
                         return;
                     }
                     catch(IOException ioe)
                     {
+                        ioe.printStackTrace();
                         return;
                     }
                 }
@@ -593,6 +595,8 @@ public class DrawFrame extends JFrame implements Runnable
         lineWidth = (int) ois.readInt();
         ois.close();
         setTitle("DrawFrame: " + currentFile.getAbsolutePath());
+        for(long k: drawables.keySet())
+            drawables.get(k).done();
         setState();
         changed = false;
     }

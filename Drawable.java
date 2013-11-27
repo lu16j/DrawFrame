@@ -10,7 +10,7 @@ public abstract class Drawable extends ArrayList<Point>
 {
     protected Color color;
     protected int width;
-    protected BufferedImage buffer;
+    protected transient BufferedImage buffer;
     /**
      * @param _color the color of the shape
      * @param _width the stroke width of the shape
