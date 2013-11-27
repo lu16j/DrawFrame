@@ -465,8 +465,12 @@ public class DrawFrame extends JFrame implements Runnable
             g.fillRect(0,0,getWidth(),getHeight());
             //Paint lines
             for(long d: drawables.keySet()) {
-                if(drawables.get(d) instanceof Erase)
-                    g.setColor(bgColor);
+                if(drawables.get(d) instanceof Erase) {
+                    Erase eraseStroke = (Erase) drawables.get(d);
+                    eraseStroke.setColor(bgColor);
+                    if(d != currentID)
+                        eraseStroke.done();
+                }
                 drawables.get(d).draw(g);
             }
         }
@@ -496,12 +500,15 @@ public class DrawFrame extends JFrame implements Runnable
             drawables.put(currentID, temp);
             drawables.get(currentID).add(e.getPoint());
             
-            temp.clear();
             repaint();
         }
         public void mouseReleased(MouseEvent e)
         {
-            drawables.get(currentID).done();
+            if(drawables.get(currentID).size() > 0)
+                drawables.get(currentID).done();
+            else
+                drawables.remove(currentID);
+            currentID = 0;
         }
         public void mouseClicked(MouseEvent e){}
         public void mouseMoved(MouseEvent e){}

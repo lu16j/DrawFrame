@@ -2,13 +2,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 class RoundedRectangle extends Drawable
 {
-    private Color color;
-    private int width;
     public RoundedRectangle(Color _color, int _width)
     {
         super(_color, _width);
-        color = _color;
-        width = _width;
     }
     public void draw(Graphics g)
     {

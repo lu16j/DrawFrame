@@ -4,13 +4,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 class Line extends Drawable
 {
-    private Color color;
-    private int width;
     public Line(Color _color, int _width)
     {
         super(_color, _width);
-        color = _color;
-        width = _width;
     }
     public void draw(Graphics g)
     {

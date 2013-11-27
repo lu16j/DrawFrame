@@ -10,8 +10,6 @@ import java.awt.image.BufferedImage;
  */
 class Squiggle extends Drawable
 {
-    private Color color;
-    private int width;
     private int minX;
     private int minY;
     /**
@@ -22,8 +20,6 @@ class Squiggle extends Drawable
     public Squiggle(Color _color, int _width)
     {
         super(_color, _width);
-        color = _color;
-        width = _width;
     }
     /**
      * Draws the squiggle
