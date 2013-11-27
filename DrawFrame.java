@@ -525,6 +525,7 @@ public class DrawFrame extends JFrame implements Runnable
         }
         public void mouseReleased(MouseEvent e)
         {
+            drawables.get(dex).done();
             dex++;
 //            refreshBuffer();
         }

@@ -26,4 +26,5 @@ class RoundedRectangle extends Drawable
             return;
         }
     }
+    public void done() {}
 }

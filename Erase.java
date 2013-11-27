@@ -24,4 +24,5 @@ class Erase extends Drawable
             g2d.drawLine(this.get(j).x, this.get(j).y, this.get(j+1).x, this.get(j+1).y);
         }
     }
+    public void done() {}
 }

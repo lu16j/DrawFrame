@@ -26,4 +26,5 @@ class Oval extends Drawable
             return;
         }
     }
+    public void done() {}
 }

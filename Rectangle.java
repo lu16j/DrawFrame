@@ -26,4 +26,5 @@ class Rectangle extends Drawable
             return;
         }
     }
+    public void done() {}
 }

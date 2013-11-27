@@ -30,4 +30,5 @@ class Line extends Drawable
             return;
         }
     }
+    public void done() {}
 }

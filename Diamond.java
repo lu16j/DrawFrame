@@ -28,4 +28,7 @@ class Diamond extends Drawable
             return;
         }
     }
+    public void done() {
+        
+    }
 }

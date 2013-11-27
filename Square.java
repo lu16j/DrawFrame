@@ -31,4 +31,5 @@ class Square extends Drawable
             return;
         }
     }
+    public void done() {}
 }

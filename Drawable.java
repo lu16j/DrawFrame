@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.awt.Point;
 import java.util.ArrayList;
 /**
@@ -7,8 +8,9 @@ import java.util.ArrayList;
  */
 public abstract class Drawable extends ArrayList<Point>
 {
-    private Color color;
-    private int width;
+    protected Color color;
+    protected int width;
+    protected BufferedImage buffer;
     /**
      * @param _color the color of the shape
      * @param _width the stroke width of the shape
@@ -19,4 +21,5 @@ public abstract class Drawable extends ArrayList<Point>
         width = _width;
     }
     public abstract void draw(Graphics g);
+    public abstract void done();
 }
