@@ -31,7 +31,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.Date;
 import java.util.regex.Pattern;
 public class DrawFrame extends JFrame implements Runnable
 {
@@ -39,7 +40,8 @@ public class DrawFrame extends JFrame implements Runnable
     Color penColor;
     int lineWidth;
     String currentShape;
-    ArrayList<Drawable> drawables;
+    TreeMap<Long, Drawable> drawables;
+    long currentID;
     DrawPanel drawPanel;
     JDialog penDialog;
     JDialog bgDialog;
@@ -50,11 +52,11 @@ public class DrawFrame extends JFrame implements Runnable
     JTextField line;
     File currentFile;
     boolean changed;
-    int dex = 0;
     public DrawFrame()
     {
         super("DrawFrame");
-        drawables = new ArrayList<Drawable>();
+        drawables = new TreeMap<Long, Drawable>();
+        
         penColor = Color.black;
         bgColor = Color.white;
         lineWidth = 1;
@@ -167,7 +169,6 @@ public class DrawFrame extends JFrame implements Runnable
                 bgColor = Color.white;
                 lineWidth = 1;
                 currentShape = "Line";
-                dex = 0;
                 changed = false;
                 setState();
                 currentFile = null;
@@ -289,18 +290,15 @@ public class DrawFrame extends JFrame implements Runnable
             {
                 drawables.clear();
                 drawPanel.repaint();
-                dex = 0;
                 changed = true;
             }
         });
         undo.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e)
             {
-                if(dex>0)
-                {
-                    drawables.remove(dex-1);
+                if(drawables.size() > 0) {
+                    drawables.remove(drawables.lastKey());
                     drawPanel.repaint();
-                    dex--;
                     changed = true;
                 }
             }
@@ -451,7 +449,6 @@ public class DrawFrame extends JFrame implements Runnable
     public class DrawPanel extends JPanel implements MouseListener, MouseMotionListener
     {
         Drawable temp;
-        Image buffer;
         
         public DrawPanel()
         {
@@ -459,42 +456,17 @@ public class DrawFrame extends JFrame implements Runnable
             addMouseListener(this);
             addMouseMotionListener(this);
         }
-        public void refreshBuffer() {
-            Graphics g = buffer.getGraphics();
-            g.setColor(bgColor);
-            g.fillRect(0,0,getWidth(),getHeight());
-            try {
-            for(int k=0; k<drawables.size(); k++)
-            {
-                if(drawables.get(k) instanceof Erase)
-                    g.setColor(bgColor);
-                drawables.get(k).draw(g);
-            }
-            } catch (Exception e) {}
-        }
         public void paintComponent(Graphics g)
         {
             //Paint background
             g.setColor(bgColor);
             g.fillRect(0,0,getWidth(),getHeight());
             //Paint lines
-            for(int k=0; k<drawables.size(); k++)
-            {
-                if(drawables.get(k) instanceof Erase)
+            for(long d: drawables.keySet()) {
+                if(drawables.get(d) instanceof Erase)
                     g.setColor(bgColor);
-                drawables.get(k).draw(g);
+                drawables.get(d).draw(g);
             }
-          
-//            if(buffer == null) {
-//                buffer = createImage(getWidth(), getHeight());
-//                refreshBuffer();
-//            }
-//            g.drawImage(buffer, 0, 0, null);
-//            if(dex == drawables.size()-1) {
-//                if(drawables.get(dex) instanceof Erase)
-//                    g.setColor(bgColor);
-//                drawables.get(dex).draw(g);
-//            }
         }
         public void mouseEntered(MouseEvent e){}
         public void mouseExited(MouseEvent e){}
@@ -518,22 +490,22 @@ public class DrawFrame extends JFrame implements Runnable
                 temp = new Oval(penColor, lineWidth);
             if(currentShape=="Eraser")
                 temp = new Erase(penColor, lineWidth);
-            drawables.add(temp);
-            drawables.get(dex).add(e.getPoint());
+            currentID = (new Date()).getTime();
+            drawables.put(currentID, temp);
+            drawables.get(currentID).add(e.getPoint());
+            
             temp.clear();
             repaint();
         }
         public void mouseReleased(MouseEvent e)
         {
-            drawables.get(dex).done();
-            dex++;
-//            refreshBuffer();
+            drawables.get(currentID).done();
         }
         public void mouseClicked(MouseEvent e){}
         public void mouseMoved(MouseEvent e){}
         public void mouseDragged(MouseEvent e)
         {
-            drawables.get(dex).add(e.getPoint());
+            drawables.get(currentID).add(e.getPoint());
             repaint();
             changed = true;
         }
@@ -608,7 +580,6 @@ public class DrawFrame extends JFrame implements Runnable
         oos.writeObject(drawables);
         oos.writeObject(penColor);
         oos.writeInt(lineWidth);
-        oos.writeInt(dex);
         oos.close();
         changed = false;
     }
@@ -617,10 +588,9 @@ public class DrawFrame extends JFrame implements Runnable
     {
         ObjectInputStream ois = new ObjectInputStream(new FileInputStream(currentFile));
         bgColor = (Color) ois.readObject();
-        drawables = (ArrayList<Drawable>) ois.readObject();
+        drawables = (TreeMap<Long, Drawable>) ois.readObject();
         penColor = (Color) ois.readObject();
         lineWidth = (int) ois.readInt();
-        dex = (int) ois.readInt();
         ois.close();
         setTitle("DrawFrame: " + currentFile.getAbsolutePath());
         setState();
